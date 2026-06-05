@@ -23,7 +23,7 @@ $trans_sql = "SELECT t.*, l.title, l.price, l.description, u.full_name as seller
 $trans_result = mysqli_query($conn, $trans_sql);
 
 if (mysqli_num_rows($trans_result) == 0) {
-    header("Location: /techtrade/my_account.php");
+    header("Location: /my_account.php");
     exit();
 }
 

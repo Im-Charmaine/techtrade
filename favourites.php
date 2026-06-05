@@ -59,19 +59,19 @@ include 'includes/header.php';
         <div class="p-card">
             <div class="p-card-img">
                 <?php if ($fav['image_url'] != ''): ?>
-                    <img src="/techtrade/uploads/<?php echo $fav['image_url']; ?>" alt="<?php echo $fav['title']; ?>">
+                    <img src="/uploads/<?php echo $fav['image_url']; ?>" alt="<?php echo $fav['title']; ?>">
                 <?php else: ?>
                     <div class="no-image">
                         <i class="ti ti-device-mobile"></i>
                         <span>No photo</span>
                     </div>
                 <?php endif; ?>
-                <a href="/techtrade/favourites.php?remove=<?php echo $fav['listing_id']; ?>" style="position: absolute; top: 10px; right: 10px; background: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--danger); box-shadow: var(--shadow);">
+                <a href="/favourites.php?remove=<?php echo $fav['listing_id']; ?>" style="position: absolute; top: 10px; right: 10px; background: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--danger); box-shadow: var(--shadow);">
                     <i class="ti ti-trash"></i>
                 </a>
             </div>
             <div class="p-card-body">
-                <a href="/techtrade/listing.php?id=<?php echo $fav['listing_id']; ?>" style="font-weight: 600; color: var(--text);">
+                <a href="/listing.php?id=<?php echo $fav['listing_id']; ?>" style="font-weight: 600; color: var(--text);">
                     <?php echo $fav['title']; ?>
                 </a>
                 <div class="p-card-price">R<?php echo number_format($fav['price'], 2); ?></div>
@@ -91,7 +91,7 @@ include 'includes/header.php';
         <i class="ti ti-heart-broken" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
         <h3>No saved items</h3>
         <p style="margin-top: 8px;">Click the heart icon on any listing to save it here.</p>
-        <a href="/techtrade/listings.php" class="btn-primary" style="margin-top: 20px;">Browse Listings</a>
+        <a href="/listings.php" class="btn-primary" style="margin-top: 20px;">Browse Listings</a>
     </div>
     <?php endif; ?>
 </section>

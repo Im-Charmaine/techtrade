@@ -9,6 +9,6 @@ session_unset();
 session_destroy();
 
 // Send user back to homepage
-header("Location: /techtrade/index.php");
+header("Location: /index.php");
 exit();
 ?>

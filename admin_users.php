@@ -38,11 +38,11 @@ include 'includes/header.php';
 <div class="admin-layout">
     <aside class="admin-sidebar">
         <div class="sidebar-brand"><i class="ti ti-shield"></i> Admin Panel</div>
-        <a href="/techtrade/admin_dashboard.php"><i class="ti ti-layout-dashboard"></i> Overview</a>
-        <a href="/techtrade/admin_users.php" class="active"><i class="ti ti-users"></i> Users</a>
-        <a href="/techtrade/admin_listings.php"><i class="ti ti-shopping-bag"></i> Listings</a>
-        <a href="/techtrade/admin_transactions.php"><i class="ti ti-transfer"></i> Transactions</a>
-        <a href="/techtrade/index.php"><i class="ti ti-arrow-left"></i> Back to Site</a>
+        <a href="/admin_dashboard.php"><i class="ti ti-layout-dashboard"></i> Overview</a>
+        <a href="/admin_users.php" class="active"><i class="ti ti-users"></i> Users</a>
+        <a href="/admin_listings.php"><i class="ti ti-shopping-bag"></i> Listings</a>
+        <a href="/admin_transactions.php"><i class="ti ti-transfer"></i> Transactions</a>
+        <a href="/index.php"><i class="ti ti-arrow-left"></i> Back to Site</a>
     </aside>
 
     <main class="admin-main">

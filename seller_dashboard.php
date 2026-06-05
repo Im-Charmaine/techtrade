@@ -89,7 +89,7 @@ include 'includes/header.php';
         <div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 class="section-title" style="margin: 0;">My Listings</h2>
-                <a href="/techtrade/post_listing.php" class="btn-primary" style="padding: 8px 16px; font-size: 14px;">
+                <a href="/post_listing.php" class="btn-primary" style="padding: 8px 16px; font-size: 14px;">
                     <i class="ti ti-plus"></i> New Listing
                 </a>
             </div>
@@ -107,7 +107,7 @@ include 'includes/header.php';
                     <?php while ($item = mysqli_fetch_assoc($listings_result)): ?>
                     <tr>
                         <td>
-                            <a href="/techtrade/listing.php?id=<?php echo $item['listing_id']; ?>" style="font-weight: 600;">
+                            <a href="/listing.php?id=<?php echo $item['listing_id']; ?>" style="font-weight: 600;">
                                 <?php echo $item['title']; ?>
                             </a>
                             <br><small style="color: var(--text-light);"><?php echo $item['category_name']; ?></small>
@@ -143,13 +143,13 @@ include 'includes/header.php';
                     </div>
                     
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <a href="/techtrade/messages.php?to=<?php echo $trans['buyer_id']; ?>&listing=<?php echo $trans['listing_id']; ?>" class="btn-small btn-view">
+                        <a href="/messages.php?to=<?php echo $trans['buyer_id']; ?>&listing=<?php echo $trans['listing_id']; ?>" class="btn-small btn-view">
                             <i class="ti ti-message-circle"></i> Message Buyer
                         </a>
-                        <a href="/techtrade/payment.php?transaction=<?php echo $trans['transaction_id']; ?>" class="btn-small btn-verify">
+                        <a href="/payment.php?transaction=<?php echo $trans['transaction_id']; ?>" class="btn-small btn-verify">
                             <i class="ti ti-check"></i> Mark Sold
                         </a>
-                        <a href="/techtrade/listing.php?id=<?php echo $trans['listing_id']; ?>" class="btn-small" style="background: var(--surface); color: var(--text);">
+                        <a href="/listing.php?id=<?php echo $trans['listing_id']; ?>" class="btn-small" style="background: var(--surface); color: var(--text);">
                             <i class="ti ti-eye"></i> View
                         </a>
                     </div>

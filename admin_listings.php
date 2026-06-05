@@ -43,11 +43,11 @@ include 'includes/header.php';
 <div class="admin-layout">
     <aside class="admin-sidebar">
         <div class="sidebar-brand"><i class="ti ti-shield"></i> Admin Panel</div>
-        <a href="/techtrade/admin_dashboard.php"><i class="ti ti-layout-dashboard"></i> Overview</a>
-        <a href="/techtrade/admin_users.php"><i class="ti ti-users"></i> Users</a>
-        <a href="/techtrade/admin_listings.php" class="active"><i class="ti ti-shopping-bag"></i> Listings</a>
-        <a href="/techtrade/admin_transactions.php"><i class="ti ti-transfer"></i> Transactions</a>
-        <a href="/techtrade/index.php"><i class="ti ti-arrow-left"></i> Back to Site</a>
+        <a href="/admin_dashboard.php"><i class="ti ti-layout-dashboard"></i> Overview</a>
+        <a href="/admin_users.php"><i class="ti ti-users"></i> Users</a>
+        <a href="/admin_listings.php" class="active"><i class="ti ti-shopping-bag"></i> Listings</a>
+        <a href="/admin_transactions.php"><i class="ti ti-transfer"></i> Transactions</a>
+        <a href="/index.php"><i class="ti ti-arrow-left"></i> Back to Site</a>
     </aside>
 
     <main class="admin-main">
@@ -78,7 +78,7 @@ include 'includes/header.php';
                     <td><span class="badge badge-<?php echo strtolower($item['status']); ?>"><?php echo $item['status']; ?></span></td>
                     <td><?php echo date('d M Y', strtotime($item['created_at'])); ?></td>
                     <td>
-                        <a href="/techtrade/listing.php?id=<?php echo $item['listing_id']; ?>" class="btn-small btn-view">View</a>
+                        <a href="/listing.php?id=<?php echo $item['listing_id']; ?>" class="btn-small btn-view">View</a>
                         <?php if ($item['status'] != 'Sold' && $item['status'] != 'Cancelled'): ?>
                             <a href="admin_listings.php?status=Sold&id=<?php echo $item['listing_id']; ?>" class="btn-small btn-verify">Mark Sold</a>
                             <a href="admin_listings.php?remove=<?php echo $item['listing_id']; ?>" 

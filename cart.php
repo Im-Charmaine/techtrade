@@ -1,5 +1,4 @@
 <?php
-// cart.php - Shopping cart page
 
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
@@ -73,7 +72,7 @@ include 'includes/header.php';
             <div style="background: var(--white); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 16px; display: flex; gap: 16px; align-items: center;">
                 <div style="width: 100px; height: 100px; background: var(--surface); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
                     <?php if ($item['image_url'] != ''): ?>
-                        <img src="/techtrade/uploads/<?php echo $item['image_url']; ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="/uploads/<?php echo $item['image_url']; ?>" style="width: 100%; height: 100%; object-fit: cover;">
                     <?php else: ?>
                         <i class="ti ti-device-mobile" style="font-size: 32px; color: var(--aqua);"></i>
                     <?php endif; ?>

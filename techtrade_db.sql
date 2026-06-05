@@ -2,8 +2,8 @@
 -- C2C Electronics Marketplace for South African Township Resellers
 
 
-CREATE DATABASE IF NOT EXISTS techtrade CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE techtrade;
+/*CREATE DATABASE IF NOT EXISTS techtrade CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE techtrade;*/
 
 -- Users: buyers, sellers, and admins all in one table
 -- Role field controls what each user can see and do

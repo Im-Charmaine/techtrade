@@ -87,10 +87,10 @@ include 'includes/header.php';
     <div class="product-grid">
         <?php if (mysqli_num_rows($result) > 0): ?>
             <?php while ($item = mysqli_fetch_assoc($result)): ?>
-            <a href="/techtrade/listing.php?id=<?php echo $item['listing_id']; ?>" class="p-card" style="display: block;">
+            <a href="/listing.php?id=<?php echo $item['listing_id']; ?>" class="p-card" style="display: block;">
                 <div class="p-card-img">
                     <?php if ($item['image_url'] != ''): ?>
-                        <img src="/techtrade/uploads/<?php echo $item['image_url']; ?>" alt="<?php echo $item['title']; ?>">
+                        <img src="/uploads/<?php echo $item['image_url']; ?>" alt="<?php echo $item['title']; ?>">
                     <?php else: ?>
                         <div class="no-image">
                             <i class="ti ti-device-mobile"></i>

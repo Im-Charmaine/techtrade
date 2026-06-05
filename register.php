@@ -122,7 +122,7 @@ include 'includes/header.php';
         </form>
         
         <p class="form-link">
-            Already have an account? <a href="/techtrade/login.php">Login here</a>
+            Already have an account? <a href="/login.php">Login here</a>
         </p>
     </div>
 </section>

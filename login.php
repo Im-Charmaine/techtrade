@@ -38,11 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 //  Redirect based on role
                 if ($user['role'] == 'admin') {
-                    header("Location: /techtrade/admin_dashboard.php");
+                    header("Location: /admin_dashboard.php");
                 } elseif ($user['role'] == 'seller') {
-                    header("Location: /techtrade/seller_dashboard.php");
+                    header("Location: /seller_dashboard.php");
                 } else {
-                    header("Location: /techtrade/index.php");
+                    header("Location: /index.php");
                 }
                 exit();
                 
@@ -82,7 +82,7 @@ include 'includes/header.php';
         </form>
         
         <p class="form-link">
-            Don't have an account? <a href="/techtrade/register.php">Register here</a>
+            Don't have an account? <a href="/register.php">Register here</a>
         </p>
     </div>
 </section>

@@ -171,7 +171,7 @@ include 'includes/header.php';
             <div style="display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
                 <div style="width: 60px; height: 60px; background: var(--surface); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                     <?php if ($item['image_url'] != ''): ?>
-                        <img src="/techtrade/uploads/<?php echo $item['image_url']; ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius);">
+                        <img src="/uploads/<?php echo $item['image_url']; ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius);">
                     <?php else: ?>
                         <i class="ti ti-device-mobile" style="font-size: 24px; color: var(--aqua);"></i>
                     <?php endif; ?>

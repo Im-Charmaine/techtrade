@@ -45,10 +45,10 @@ include 'includes/header.php';
         <h1>Buy & Sell <span>Electronics</span> with Confidence</h1>
         <p>South Africa's trusted marketplace for township resellers. Verified sellers, rated transactions, secure deals.</p>
         <div class="hero-buttons">
-            <a href="/techtrade/listings.php" class="btn-primary">
+            <a href="/listings.php" class="btn-primary">
                 <i class="ti ti-search"></i> Browse Listings
             </a>
-            <a href="/techtrade/register.php" class="btn-secondary">
+            <a href="/register.php" class="btn-secondary">
                 <i class="ti ti-user-plus"></i> Start Selling
             </a>
         </div>
@@ -81,11 +81,11 @@ include 'includes/header.php';
 <section class="categories">
     <div class="container">
         <div class="category-chips">
-            <a href="/techtrade/listings.php" class="category-chip active">
+            <a href="/listings.php" class="category-chip active">
                 <i class="ti ti-layout-grid"></i> All
             </a>
             <?php while ($cat = mysqli_fetch_assoc($cat_result)): ?>
-            <a href="/techtrade/listings.php?category=<?php echo $cat['category_id']; ?>" class="category-chip">
+            <a href="/listings.php?category=<?php echo $cat['category_id']; ?>" class="category-chip">
                 <i class="ti <?php echo $cat['icon']; ?>"></i> <?php echo $cat['name']; ?>
             </a>
             <?php endwhile; ?>
@@ -101,7 +101,7 @@ include 'includes/header.php';
         <div class="p-card">
             <div class="p-card-img">
                 <?php if ($item['image_url'] != ''): ?>
-                    <img src="/techtrade/uploads/<?php echo $item['image_url']; ?>" alt="<?php echo $item['title']; ?>">
+                    <img src="/uploads/<?php echo $item['image_url']; ?>" alt="<?php echo $item['title']; ?>">
                 <?php else: ?>
                     <div class="no-image">
                         <i class="ti ti-device-mobile"></i>
@@ -124,7 +124,7 @@ include 'includes/header.php';
         <?php endwhile; ?>
     </div>
     <div style="text-align: center; padding: 20px 0 40px;">
-        <a href="/techtrade/listings.php" class="btn-primary">
+        <a href="/listings.php" class="btn-primary">
             View All Listings <i class="ti ti-arrow-right"></i>
         </a>
     </div>

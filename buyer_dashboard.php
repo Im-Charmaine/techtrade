@@ -68,7 +68,7 @@ include 'includes/header.php';
             <?php while ($trans = mysqli_fetch_assoc($trans_result)): ?>
             <tr>
                 <td>
-                    <a href="/techtrade/listing.php?id=<?php echo $trans['listing_id']; ?>" style="font-weight: 600;">
+                    <a href="/listing.php?id=<?php echo $trans['listing_id']; ?>" style="font-weight: 600;">
                         <?php echo $trans['title']; ?>
                     </a>
                 </td>
@@ -78,9 +78,9 @@ include 'includes/header.php';
                 <td><?php echo $trans['payment_method']; ?></td>
                 <td>
                     <?php if ($trans['status'] == 'Pending'): ?>
-                        <a href="/techtrade/payment.php?transaction=<?php echo $trans['transaction_id']; ?>" class="btn-small btn-view">Pay</a>
+                        <a href="/payment.php?transaction=<?php echo $trans['transaction_id']; ?>" class="btn-small btn-view">Pay</a>
                     <?php elseif ($trans['status'] == 'Sold'): ?>
-                        <a href="/techtrade/my_account.php?rate=<?php echo $trans['transaction_id']; ?>" class="btn-small btn-verify">Rate</a>
+                        <a href="/my_account.php?rate=<?php echo $trans['transaction_id']; ?>" class="btn-small btn-verify">Rate</a>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -90,7 +90,7 @@ include 'includes/header.php';
     <?php else: ?>
     <div style="background: var(--white); padding: 48px; border-radius: var(--radius-lg); text-align: center; color: var(--text-light);">
         <i class="ti ti-shopping-cart" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
-        <p>No purchases yet. <a href="/techtrade/listings.php" style="color: var(--primary);">Start browsing</a></p>
+        <p>No purchases yet. <a href="/listings.php" style="color: var(--primary);">Start browsing</a></p>
     </div>
     <?php endif; ?>
 </section>

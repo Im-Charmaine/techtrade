@@ -2,10 +2,10 @@
 // db.php - Database connection
 // This file connects TechTrade to the MySQL database
 
-$host     = "localhost";    // XAMPP runs MySQL on localhost
-$user     = "root";         // Default XAMPP username
-$password = "";             // Default XAMPP has no password
-$dbname   = "techtrade";   // Our database name
+$host     = "sql207.infinityfree.com";    
+$user     = "if0_42100238";         
+$password = "VBXU1X8lRZTCpjV";             
+$dbname   = "if0_42100238_techtrade";   
 
 // Create the connection
 $conn = mysqli_connect($host, $user, $password, $dbname);

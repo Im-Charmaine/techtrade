@@ -12,15 +12,15 @@
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
-                <a href="/techtrade/listings.php">Browse Listings</a>
-                <a href="/techtrade/register.php">Become a Seller</a>
-                <a href="/techtrade/login.php">Login</a>
+                <a href="/listings.php">Browse Listings</a>
+                <a href="/register.php">Become a Seller</a>
+                <a href="/login.php">Login</a>
             </div>
             <div class="footer-links">
     <h4>Support</h4>
-    <a href="/techtrade/how_it_works.php">How It Works</a>
-    <a href="/techtrade/safety_tips.php">Safety Tips</a>
-    <a href="/techtrade/contact.php">Contact Us</a>
+    <a href="/how_it_works.php">How It Works</a>
+    <a href="/safety_tips.php">Safety Tips</a>
+    <a href="/contact.php">Contact Us</a>
 </div>
             <div class="footer-links">
                 <h4>Payment Options</h4>
@@ -35,6 +35,6 @@
     </div>
 </footer>
 
-<script src="/techtrade/js/main.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>

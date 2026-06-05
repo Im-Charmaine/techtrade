@@ -1,5 +1,5 @@
 <?php
-// my_account.php - User account with active orders, cancel option, and messaging
+//User account with active orders, cancel option, and messaging
 
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
@@ -119,7 +119,7 @@ include 'includes/header.php';
             <?php else: ?>
                 <div style="background: var(--white); padding: 40px; border-radius: var(--radius); text-align: center; color: var(--text-light);">
                     <i class="ti ti-shopping-bag" style="font-size: 40px; margin-bottom: 12px; display: block;"></i>
-                    <p>No orders yet. <a href="/techtrade/listings.php" style="color: var(--primary);">Browse listings</a></p>
+                    <p>No orders yet. <a href="/listings.php" style="color: var(--primary);">Browse listings</a></p>
                 </div>
             <?php endif; ?>
         </div>
@@ -132,14 +132,14 @@ include 'includes/header.php';
                 <?php while ($fav = mysqli_fetch_assoc($fav_result)): ?>
                 <div style="background: var(--white); padding: 16px; border-radius: var(--radius); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <a href="/techtrade/listing.php?id=<?php echo $fav['listing_id']; ?>" style="font-weight: 600; color: var(--text);">
+                        <a href="/listing.php?id=<?php echo $fav['listing_id']; ?>" style="font-weight: 600; color: var(--text);">
                             <?php echo $fav['title']; ?>
                         </a>
                         <p style="font-size: 13px; color: var(--text-light);">
                             R<?php echo number_format($fav['price'], 2); ?> | <?php echo $fav['seller_name']; ?> | <?php echo $fav['status']; ?>
                         </p>
                     </div>
-                    <a href="/techtrade/favourites.php?remove=<?php echo $fav['listing_id']; ?>" style="color: var(--danger); font-size: 20px;">
+                    <a href="/favourites.php?remove=<?php echo $fav['listing_id']; ?>" style="color: var(--danger); font-size: 20px;">
                         <i class="ti ti-trash"></i>
                     </a>
                 </div>
@@ -148,7 +148,7 @@ include 'includes/header.php';
             <?php else: ?>
                 <div style="background: var(--white); padding: 40px; border-radius: var(--radius); text-align: center; color: var(--text-light);">
                     <i class="ti ti-heart" style="font-size: 40px; margin-bottom: 12px; display: block;"></i>
-                    <p>No saved items. <a href="/techtrade/listings.php" style="color: var(--primary);">Browse listings</a></p>
+                    <p>No saved items. <a href="/listings.php" style="color: var(--primary);">Browse listings</a></p>
                 </div>
             <?php endif; ?>
         </div>

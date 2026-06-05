@@ -13,7 +13,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 $listing_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($listing_id == 0) {
-    header("Location: /techtrade/listings.php");
+    header("Location: /listings.php");
     exit();
 }
 
@@ -29,7 +29,7 @@ $sql = "SELECT l.*, u.full_name as seller_name, u.location, u.phone, u.is_verifi
 $result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) == 0) {
-    header("Location: /techtrade/listings.php");
+    header("Location: /listings.php");
     exit();
 }
 
@@ -48,7 +48,7 @@ if (is_logged_in()) {
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['express_interest'])) {
     if (!is_logged_in()) {
-        header("Location: /techtrade/login.php");
+        header("Location: /login.php");
         exit();
     }
 
@@ -85,7 +85,7 @@ include 'includes/header.php';
         <!-- Product Image -->
         <div class="listing-image">
             <?php if ($item['image_url'] != ''): ?>
-                <img src="/techtrade/uploads/<?php echo $item['image_url']; ?>" alt="<?php echo $item['title']; ?>">
+                <img src="/uploads/<?php echo $item['image_url']; ?>" alt="<?php echo $item['title']; ?>">
             <?php else: ?>
                 <div class="no-image" style="flex-direction: column;">
                     <i class="ti ti-device-mobile" style="font-size: 64px;"></i>
@@ -138,18 +138,18 @@ include 'includes/header.php';
                             <i class="ti ti-hand-finger"></i> Express Interest
                         </button>
                     </form>
-                    <a href="/techtrade/messages.php?to=<?php echo $item['seller_id']; ?>&listing=<?php echo $listing_id; ?>" class="btn-outline">
+                    <a href="/messages.php?to=<?php echo $item['seller_id']; ?>&listing=<?php echo $listing_id; ?>" class="btn-outline">
                         <i class="ti ti-message-circle"></i> Message Seller
                     </a>
                     <a href="cart.php?add=<?php echo $listing_id; ?>" class="btn-outline" style="border-color: var(--primary); color: var(--primary);">
                         <i class="ti ti-shopping-cart"></i> Add to Cart</a>
                 <?php elseif (!is_logged_in()): ?>
-                    <a href="/techtrade/login.php" class="btn-primary btn-large">
+                    <a href="/login.php" class="btn-primary btn-large">
                         <i class="ti ti-login"></i> Login to Express Interest
                     </a>
                 <?php endif; ?>
                 <?php if (is_logged_in()): ?>
-                    <a href="/techtrade/favourites.php?add=<?php echo $listing_id; ?>" class="btn-outline" style="color: var(--danger); border-color: var(--danger);">
+                    <a href="/favourites.php?add=<?php echo $listing_id; ?>" class="btn-outline" style="color: var(--danger); border-color: var(--danger);">
                         <i class="ti ti-heart<?php echo $fav_check ? '-filled' : ''; ?>"></i> 
                         <?php echo $fav_check ? 'Saved' : 'Save'; ?>
                     </a>

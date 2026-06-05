@@ -39,7 +39,7 @@ function is_admin() {
 // Send user to login page if not logged in
 function require_login() {
     if (!is_logged_in()) {
-        header("Location: /techtrade/login.php");
+        header("Location: /login.php");
         exit();
     }
 }
@@ -48,7 +48,7 @@ function require_login() {
 function require_seller() {
     require_login();
     if (!is_seller()) {
-        header("Location: /techtrade/index.php");
+        header("Location: /index.php");
         exit();
     }
 }
@@ -57,7 +57,7 @@ function require_seller() {
 function require_admin() {
     require_login();
     if (!is_admin()) {
-        header("Location: /techtrade/index.php");
+        header("Location: /index.php");
         exit();
     }
 }

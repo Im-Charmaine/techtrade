@@ -83,7 +83,7 @@ include 'includes/header.php';
         <div class="conversations-list">
             <?php if (mysqli_num_rows($conv_result) > 0): ?>
                 <?php while ($conv = mysqli_fetch_assoc($conv_result)): ?>
-                <a href="/techtrade/messages.php?to=<?php echo $conv['other_id']; ?>" 
+                <a href="/messages.php?to=<?php echo $conv['other_id']; ?>" 
                    class="conversation-item <?php echo $chat_with == $conv['other_id'] ? 'active' : ''; ?>">
                     <h4>
                         <?php echo $conv['other_name']; ?>
