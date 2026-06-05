@@ -1,5 +1,5 @@
 <?php
-// Create listing with SECURITY FIXES
+
 // Uses prepared statements and file upload validation
 
 require_once 'includes/db.php';
@@ -19,7 +19,7 @@ $image_url = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    //  Clean all text inputs
+    // Clean all text inputs
     $title = clean($_POST['title']);
     $description = clean($_POST['description']);
     $price = floatval($_POST['price']);
@@ -27,46 +27,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $condition_status = clean($_POST['condition_status']);
     $seller_id = $_SESSION['user_id'];
 
-    //  Handle image upload with VALIDATION
+    // Handle image upload with VALIDATION
     $image_url = '';
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
 
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
         $filename = $_FILES['image']['name'];
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $file_size = $_FILES['image']['size'];
+        $max_size = 5 * 1024 * 1024; // 5MB in bytes
 
-        // Check file type is allowed
-        if (in_array($ext, $allowed)) {
-
-            // Check file size (max 5MB )
+        // Check file type
+        if (!in_array($ext, $allowed)) {
+            $error = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+        }
+        // Check file size (max 5MB)
+        elseif ($file_size > $max_size) {
+            $error = 'Image is too large. Maximum size is 5MB.';
+        }
+        else {
+            // All checks passed — proceed with upload
             $new_name = time() . '_' . basename($filename);
-            $upload_path = __DIR__ . '/uploads/' . $new_name;
-            if (!is_dir(__DIR__ . '/uploads')) {
-                mkdir(__DIR__ . '/uploads', 0777, true);
+            $upload_dir = __DIR__ . '/uploads/';
+            $upload_path = $upload_dir . $new_name;
+
+            // Create uploads directory if it doesn't exist
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
             }
 
             if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
                 $image_url = $new_name;
             } else {
-                $error = 'Failed to save image. Please check uploads folder exists.';
+                $error = 'Failed to save image. Please check uploads folder permissions.';
             }
-        } else {
-            $error = 'Image is too large. Maximum size is 5MB.';
         }
-    } else {
-        $error = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
     }
 
-    //  Validate required fields
+    // Validate required fields
     if ($title == '' || $price <= 0 || $category_id == 0) {
         $error = 'Please fill in all required fields.';
     } elseif ($error == '') {
 
-        //  SECURE INSERT with prepared statement
+        // SECURE INSERT with prepared statement
         $stmt = mysqli_prepare(
             $conn,
             "INSERT INTO listings (seller_id, category_id, title, description, price, condition_status, image_url, status) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         $status = 'Listed';
@@ -81,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_stmt_close($stmt);
     }
 }
-
 
 // Fetch categories for dropdown
 $cat_sql = "SELECT * FROM categories ORDER BY name";
