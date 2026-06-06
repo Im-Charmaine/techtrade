@@ -56,7 +56,7 @@ include 'includes/header.php';
         </div>
 
         <!-- Stats Cards -->
-        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value"><?php echo $total_users; ?></div>
                 <div class="stat-label">Total Users</div>

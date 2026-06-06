@@ -19,7 +19,6 @@
     <nav class="navbar">
         <div class="container nav-container">
 
-
             <!-- Back Button (hidden on homepage) -->
             <?php
             $current_page = basename($_SERVER['PHP_SELF']);
@@ -51,6 +50,7 @@
                     <li><a href="/index.php">Home</a></li>
                     <li><a href="/listings.php">Browse</a></li>
 
+                    <?php $cart_count = 0; ?>
                     <?php if (is_logged_in()): ?>
 
                         <?php if (is_seller()): ?>
@@ -90,11 +90,24 @@
                         <li><a href="/login.php">Login</a></li>
                         <li><a href="/register.php" class="btn-register">Register</a></li>
                     <?php endif; ?>
-
-                    <li><button class="theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                            <i class="ti ti-moon" id="themeIcon"></i>
-                        </button></li>
                 </ul>
+                </ul>
+
+                </ul>
+
+                <!-- Always-visible icons group -->
+                <div class="nav-icons">
+                    <a href="/cart.php" class="nav-icon" style="position: relative; color: white;">
+                        <i class="ti ti-shopping-cart"></i>
+                        <?php if ($cart_count > 0): ?>
+                            <span style="position: absolute; top: -6px; right: -6px; background: var(--accent); color: white; font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 10px; min-width: 16px; text-align: center;"><?php echo $cart_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+
+                    <button class="theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <i class="ti ti-moon" id="themeIcon"></i>
+                    </button>
+                </div>
 
                 <!-- Mobile Menu Button -->
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
@@ -108,6 +121,12 @@
         <a href="/index.php">Home</a>
         <a href="/listings.php">Browse</a>
         <?php if (is_logged_in()): ?>
+            <a href="/cart.php">
+                <i class="ti ti-shopping-cart"></i> Cart
+                <?php if ($cart_count > 0): ?>
+                    (<?php echo $cart_count; ?>)
+                <?php endif; ?>
+            </a>
             <?php if (is_seller()): ?>
                 <a href="/seller_dashboard.php">Dashboard</a>
                 <a href="/post_listing.php">+ Sell Item</a>
