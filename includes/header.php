@@ -11,16 +11,20 @@
     <title>TechTrade - Buy & Sell Electronics in South Africa</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link rel="icon" type="image/png" href=!/images/logo.png">
 
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4EWM40GR4Y"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4EWM40GR4Y"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-4EWM40GR4Y');
-</script>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-4EWM40GR4Y');
+    </script>
 </head>
 
 <body>
@@ -42,11 +46,7 @@
             <!-- Logo -->
             <a href="/index.php" class="nav-logo">
                 <a href="/index.php" class="nav-logo">
-                    <svg width="130" height="32" viewBox="0 0 130 32">
-                        <rect x="0" y="4" width="24" height="24" rx="6" fill="#1A56DB" />
-                        <text x="12" y="21" font-family="Arial" font-size="14" font-weight="700" fill="white" text-anchor="middle">T</text>
-                        <text x="32" y="22" font-family="Arial" font-size="17" font-weight="600" fill="white">TechTrade</text>
-                    </svg>
+                    <img src="/images/logo.png" alt="TechTrade" height="40" style="max-width: 150px; object-fit: contain;">
                 </a>
 
                 <!-- Search Bar -->
