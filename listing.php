@@ -122,36 +122,29 @@ include 'includes/header.php';
                     <i class="ti ti-map-pin"></i> <?php echo $item['location']; ?>
                 </div>
                 <?php if ($item['avg_rating']): ?>
-                <div style="margin-top: 8px; color: var(--accent);">
-                    <?php for ($i = 0; $i < round($item['avg_rating']); $i++): ?><i class="ti ti-star-filled"></i><?php endfor; ?>
-                    <?php for ($i = round($item['avg_rating']); $i < 5; $i++): ?><i class="ti ti-star"></i><?php endfor; ?>
-                    <span style="color: var(--text-light); font-size: 13px;">(<?php echo $item['total_ratings']; ?> reviews)</span>
-                </div>
+                    <div style="margin-top: 8px; color: var(--accent);">
+                        <?php for ($i = 0; $i < round($item['avg_rating']); $i++): ?><i class="ti ti-star-filled"></i><?php endfor; ?>
+                        <?php for ($i = round($item['avg_rating']); $i < 5; $i++): ?><i class="ti ti-star"></i><?php endfor; ?>
+                        <span style="color: var(--text-light); font-size: 13px;">(<?php echo $item['total_ratings']; ?> reviews)</span>
+                    </div>
                 <?php endif; ?>
             </div>
 
             <!-- Action Buttons -->
             <div class="action-buttons">
                 <?php if (is_logged_in() && $_SESSION['user_id'] != $item['seller_id'] && $item['status'] == 'Listed'): ?>
-                    <form method="POST" style="display: inline;">
-                        <button type="submit" name="express_interest" class="btn-primary btn-large">
-                            <i class="ti ti-hand-finger"></i> Express Interest
+                    <form method="POST" action="add_to_cart.php" style="display: inline;">
+                        <input type="hidden" name="listing_id" value="<?php echo $listing_id; ?>">
+                        <button type="submit" class="btn-outline" style="border-color: var(--primary); color: var(--primary); cursor: pointer;">
+                            <i class="ti ti-shopping-cart"></i> Add to Cart
                         </button>
                     </form>
-                    <a href="/messages.php?to=<?php echo $item['seller_id']; ?>&listing=<?php echo $listing_id; ?>" class="btn-outline">
+                    <a href="messages.php?to=<?php echo $item['seller_id']; ?>&listing=<?php echo $listing_id; ?>" class="btn-outline">
                         <i class="ti ti-message-circle"></i> Message Seller
                     </a>
-                    <a href="cart.php?add=<?php echo $listing_id; ?>" class="btn-outline" style="border-color: var(--primary); color: var(--primary);">
-                        <i class="ti ti-shopping-cart"></i> Add to Cart</a>
                 <?php elseif (!is_logged_in()): ?>
-                    <a href="/login.php" class="btn-primary btn-large">
-                        <i class="ti ti-login"></i> Login to Express Interest
-                    </a>
-                <?php endif; ?>
-                <?php if (is_logged_in()): ?>
-                    <a href="/favourites.php?add=<?php echo $listing_id; ?>" class="btn-outline" style="color: var(--danger); border-color: var(--danger);">
-                        <i class="ti ti-heart<?php echo $fav_check ? '-filled' : ''; ?>"></i> 
-                        <?php echo $fav_check ? 'Saved' : 'Save'; ?>
+                    <a href="login.php" class="btn-primary btn-large">
+                        <i class="ti ti-login"></i> Login to Buy
                     </a>
                 <?php endif; ?>
             </div>

@@ -1,34 +1,17 @@
 <?php
-
+session_start();
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 require_login();
 
 $user_id = $_SESSION['user_id'];
 
-// Handle adding to cart
-if (isset($_GET['add'])) {
-    $listing_id = intval($_GET['add']);
-    
-    // Check if item already in cart
-    $check_sql = "SELECT * FROM cart WHERE user_id = $user_id AND listing_id = $listing_id";
-    $check_result = mysqli_query($conn, $check_sql);
-    
-    if (mysqli_num_rows($check_result) == 0) {
-        $insert_sql = "INSERT INTO cart (user_id, listing_id, quantity) VALUES ($user_id, $listing_id, 1)";
-        mysqli_query($conn, $insert_sql);
-    }
-    
-    header("Location: cart.php");
-    exit();
-}
-
-// Handle removing from cart
+// Handle remove from cart
 if (isset($_GET['remove'])) {
     $cart_id = intval($_GET['remove']);
     mysqli_query($conn, "DELETE FROM cart WHERE cart_id = $cart_id AND user_id = $user_id");
-    header("Location: cart.php");
-    exit();
+    header('Location: cart.php');
+    exit;
 }
 
 // Handle quantity update
@@ -38,11 +21,11 @@ if (isset($_POST['update_qty'])) {
     if ($qty > 0) {
         mysqli_query($conn, "UPDATE cart SET quantity = $qty WHERE cart_id = $cart_id AND user_id = $user_id");
     }
-    header("Location: cart.php");
-    exit();
+    header('Location: cart.php');
+    exit;
 }
 
-// Fetch cart items
+// Fetch cart items with listing details
 $cart_sql = "SELECT c.*, l.title, l.price, l.image_url, l.status, u.full_name as seller_name
              FROM cart c
              JOIN listings l ON c.listing_id = l.listing_id
@@ -50,7 +33,6 @@ $cart_sql = "SELECT c.*, l.title, l.price, l.image_url, l.status, u.full_name as
              WHERE c.user_id = $user_id AND l.status = 'Listed'";
 $cart_result = mysqli_query($conn, $cart_sql);
 
-// Calculate total
 $total = 0;
 $items = [];
 while ($row = mysqli_fetch_assoc($cart_result)) {
@@ -61,70 +43,110 @@ while ($row = mysqli_fetch_assoc($cart_result)) {
 include 'includes/header.php';
 ?>
 
-<section class="dashboard container">
-    <h2 class="section-title">Shopping Cart</h2>
+<div class="container" style="padding: 32px 20px; max-width: 900px; margin: 0 auto;">
+    <h1 style="margin-bottom: 8px;">Shopping Cart</h1>
+    <p style="color: var(--text-light); margin-bottom: 24px;">
+        <?php echo count($items); ?> item(s) in your cart
+    </p>
     
     <?php if (count($items) > 0): ?>
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
-        <!-- Cart Items -->
-        <div>
-            <?php foreach ($items as $item): ?>
-            <div style="background: var(--white); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 16px; display: flex; gap: 16px; align-items: center;">
-                <div style="width: 100px; height: 100px; background: var(--surface); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
-                    <?php if ($item['image_url'] != ''): ?>
-                        <img src="/uploads/<?php echo $item['image_url']; ?>" style="width: 100%; height: 100%; object-fit: cover;">
-                    <?php else: ?>
-                        <i class="ti ti-device-mobile" style="font-size: 32px; color: var(--aqua);"></i>
-                    <?php endif; ?>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+            <?php foreach ($items as $item): 
+                $subtotal = $item['price'] * $item['quantity'];
+            ?>
+                <div style="background: var(--bg-card); border: 1px solid rgba(100,100,200,0.2); border-radius: 12px; padding: 20px; display: flex; gap: 20px; align-items: flex-start;">
+                    
+                    <!-- Product Image -->
+                    <div style="flex-shrink: 0;">
+                        <?php if (!empty($item['image_url'])): ?>
+                            <img src="uploads/<?php echo htmlspecialchars($item['image_url']); ?>" 
+                                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(100,100,200,0.2);">
+                        <?php else: ?>
+                            <div style="width: 100px; height: 100px; background: var(--surface); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="ti ti-photo" style="color: var(--text-light); font-size: 32px;"></i>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div style="flex: 1; min-width: 0;">
+                        <h3 style="font-size: 18px; margin-bottom: 6px; color: var(--text);">
+                            <a href="listing.php?id=<?php echo $item['listing_id']; ?>" style="color: var(--text); text-decoration: none;">
+                                <?php echo htmlspecialchars($item['title']); ?>
+                            </a>
+                        </h3>
+                        
+                        <p style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">
+                            <i class="ti ti-user" style="margin-right: 4px;"></i>
+                            <?php echo htmlspecialchars($item['seller_name']); ?>
+                        </p>
+                        
+                        <p style="color: var(--primary); font-weight: 700; font-size: 20px; margin-bottom: 12px;">
+                            R<?php echo number_format($item['price'], 2); ?>
+                            <?php if ($item['quantity'] > 1): ?>
+                                <span style="color: var(--text-light); font-size: 14px; font-weight: 400;"> × <?php echo $item['quantity']; ?></span>
+                            <?php endif; ?>
+                        </p>
+                        
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <form method="POST" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="hidden" name="cart_id" value="<?php echo $item['cart_id']; ?>">
+                                <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1" style="width: 60px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; text-align: center; background: var(--bg-dark); color: var(--text);">
+                                <button type="submit" name="update_qty" class="btn-small btn-view" style="padding: 8px 12px;"><i class="ti ti-check"></i></button>
+                            </form>
+                            
+                            <a href="cart.php?remove=<?php echo $item['cart_id']; ?>" 
+                               style="color: var(--danger); font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 4px;"
+                               onclick="return confirm('Remove this item from your cart?')">
+                                <i class="ti ti-trash"></i> Remove
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Subtotal -->
+                    <div style="text-align: right; flex-shrink: 0;">
+                        <p style="color: var(--text-light); font-size: 12px; margin-bottom: 4px;">Subtotal</p>
+                        <p style="color: var(--text); font-weight: 700; font-size: 18px;">R<?php echo number_format($subtotal, 2); ?></p>
+                    </div>
                 </div>
-                <div style="flex: 1;">
-                    <h4 style="font-size: 16px; margin-bottom: 4px;"><?php echo $item['title']; ?></h4>
-                    <p style="font-size: 13px; color: var(--text-light); margin-bottom: 8px;">Seller: <?php echo $item['seller_name']; ?></p>
-                    <div style="font-size: 18px; font-weight: 700; color: var(--primary);">R<?php echo number_format($item['price'], 2); ?></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <form method="POST" style="display: flex; align-items: center; gap: 8px;">
-                        <input type="hidden" name="cart_id" value="<?php echo $item['cart_id']; ?>">
-                        <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1" style="width: 60px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); text-align: center;">
-                        <button type="submit" name="update_qty" class="btn-small btn-view" style="padding: 8px 12px;"><i class="ti ti-check"></i></button>
-                    </form>
-                    <a href="cart.php?remove=<?php echo $item['cart_id']; ?>" class="btn-small btn-delete" onclick="return confirmDelete('Remove this item?')"><i class="ti ti-trash"></i></a>
-                </div>
-            </div>
             <?php endforeach; ?>
         </div>
         
         <!-- Cart Summary -->
-        <div style="background: var(--white); padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow); height: fit-content;">
-            <h3 style="margin-bottom: 20px;">Order Summary</h3>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-light);">Subtotal</span>
-                <span style="font-weight: 600;">R<?php echo number_format($total, 2); ?></span>
+        <div style="background: var(--bg-card); border: 1px solid rgba(100,100,200,0.2); border-radius: 16px; padding: 24px; position: sticky; bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(100,100,200,0.2);">
+                <div>
+                    <p style="color: var(--text-light); font-size: 14px; margin-bottom: 4px;">Total (<?php echo count($items); ?> items)</p>
+                    <p style="font-size: 14px; color: var(--text-light);">Excluding delivery</p>
+                </div>
+                <span style="font-size: 28px; font-weight: 800; color: var(--primary);">R<?php echo number_format($total, 2); ?></span>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                <span style="color: var(--text-light);">Delivery</span>
-                <span style="color: var(--success);">Calculated at checkout</span>
+            <div style="display: flex; gap: 12px;">
+                <a href="listings.php" class="btn-secondary" style="flex: 1; text-align: center; padding: 14px;">
+                    <i class="ti ti-arrow-left"></i> Continue Shopping
+                </a>
+                <a href="checkout.php" class="btn-primary" style="flex: 1; text-align: center; padding: 14px; font-weight: 700;">
+                    Proceed to Checkout <i class="ti ti-arrow-right"></i>
+                </a>
             </div>
-            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; display: flex; justify-content: space-between; font-size: 20px; font-weight: 700;">
-                <span>Total</span>
-                <span style="color: var(--primary);">R<?php echo number_format($total, 2); ?></span>
+        </div>
+        
+    <?php else: ?>
+        
+        <!-- Empty Cart -->
+        <div style="text-align: center; padding: 80px 20px;">
+            <div style="width: 120px; height: 120px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                <i class="ti ti-shopping-cart-off" style="font-size: 56px; color: var(--text-light);"></i>
             </div>
-            <a href="checkout.php" class="btn-primary" style="width: 100%; margin-top: 24px; text-align: center; display: block;">
-                <i class="ti ti-credit-card"></i> Proceed to Checkout
-            </a>
-            <a href="listings.php" style="display: block; text-align: center; margin-top: 12px; color: var(--text-light); font-size: 14px;">
-                <i class="ti ti-arrow-left"></i> Continue Shopping
+            <h2 style="margin-bottom: 8px; font-size: 24px;">Your cart is empty</h2>
+            <p style="color: var(--text-light); margin-bottom: 32px; font-size: 16px;">Looks like you haven't added anything to your cart yet.</p>
+            <a href="listings.php" class="btn-primary" style="padding: 14px 32px; font-size: 16px;">
+                <i class="ti ti-search"></i> Browse Listings
             </a>
         </div>
-    </div>
-    <?php else: ?>
-    <div style="background: var(--white); padding: 60px; border-radius: var(--radius-lg); text-align: center; color: var(--text-light);">
-        <i class="ti ti-shopping-cart" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
-        <h3 style="margin-bottom: 8px;">Your cart is empty</h3>
-        <p style="margin-bottom: 24px;">Browse our listings and add items you like.</p>
-        <a href="listings.php" class="btn-primary">Browse Listings</a>
-    </div>
+        
     <?php endif; ?>
-</section>
+</div>
 
 <?php include 'includes/footer.php'; ?>

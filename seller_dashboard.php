@@ -32,7 +32,7 @@ include 'includes/header.php';
         <p>Manage your listings and track sales</p>
     </div>
 
-    <!-- Stats -->
+    <!--stats-->
     <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 32px;">
         <div class="stat-card">
             <div class="stat-value"><?php echo $total_listings; ?></div>
@@ -48,16 +48,41 @@ include 'includes/header.php';
         </div>
     </div>
 
+    <!-- Messages Card -->
+    <div class="dashboard-card" style="background: var(--bg-card); border: 1px solid rgba(100,100,200,0.2); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h3 style="margin-bottom: 8px;"><i class="ti ti-message-circle" style="color: var(--primary);"></i> Messages</h3>
+                <p style="color: var(--text-light); font-size: 14px;">View and reply to buyer inquiries</p>
+            </div>
+            <?php
+            // Count unread messages for this seller
+            $unread_sql = "SELECT COUNT(*) as unread FROM messages WHERE receiver_id = $seller_id AND is_read = 0";
+            $unread_result = mysqli_query($conn, $unread_sql);
+            $unread = mysqli_fetch_assoc($unread_result)['unread'];
+            if ($unread > 0):
+            ?>
+                <span style="background: var(--danger); color: white; font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 20px;">
+                    <?php echo $unread; ?> new
+                </span>
+            <?php endif; ?>
+        </div>
+        <a href="messages.php" class="btn-primary" style="margin-top: 16px; display: inline-block;">
+            <i class="ti ti-inbox"></i> View Messages
+        </a>
+    </div>
+
     <!-- Actions -->
     <div style="margin-bottom: 24px;">
         <a href="post_listing.php" class="btn-primary">
             <i class="ti ti-plus"></i> Post New Listing
         </a>
+
     </div>
 
     <!-- Listings Table -->
     <h2 class="section-title">My Listings</h2>
-    
+
     <?php if (mysqli_num_rows($listings_result) == 0): ?>
         <div class="alert" style="background: var(--surface); padding: 40px; text-align: center; border-radius: var(--radius-lg);">
             <i class="ti ti-package" style="font-size: 48px; color: var(--text-light);"></i>
@@ -77,51 +102,51 @@ include 'includes/header.php';
             </thead>
             <tbody>
                 <?php while ($item = mysqli_fetch_assoc($listings_result)): ?>
-                <tr>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <?php if (!empty($item['image_url'])): ?>
-                                <img src="uploads/<?php echo htmlspecialchars($item['image_url']); ?>" 
-                                     alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius);">
-                            <?php else: ?>
-                                <div style="width: 50px; height: 50px; background: var(--surface); border-radius: var(--radius); display: flex; align-items: center; justify-content: center;">
-                                    <i class="ti ti-photo" style="color: var(--text-light);"></i>
-                                </div>
-                            <?php endif; ?>
-                            <span><?php echo htmlspecialchars($item['title']); ?></span>
-                        </div>
-                    </td>
-                    <td>R<?php echo number_format($item['price'], 2); ?></td>
-                    <td>
-                        <span class="badge badge-<?php echo strtolower($item['status']); ?>">
-                            <?php echo $item['status']; ?>
-                        </span>
-                    </td>
-                    <td><?php echo date('d M Y', strtotime($item['created_at'])); ?></td>
-                    <td>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <a href="listing.php?id=<?php echo $item['listing_id']; ?>" 
-                               class="btn-small btn-view" target="_blank">
-                                <i class="ti ti-eye"></i> View
-                            </a>
-                            
-                            <?php if ($item['status'] == 'Listed'): ?>
-                                <a href="update_status.php?id=<?php echo $item['listing_id']; ?>&status=Sold" 
-                                   class="btn-small" 
-                                   style="background: var(--success); color: white;"
-                                   onclick="return confirm('Mark this listing as sold?')">
-                                    <i class="ti ti-check"></i> Mark Sold
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <?php if (!empty($item['image_url'])): ?>
+                                    <img src="uploads/<?php echo htmlspecialchars($item['image_url']); ?>"
+                                        alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius);">
+                                <?php else: ?>
+                                    <div style="width: 50px; height: 50px; background: var(--surface); border-radius: var(--radius); display: flex; align-items: center; justify-content: center;">
+                                        <i class="ti ti-photo" style="color: var(--text-light);"></i>
+                                    </div>
+                                <?php endif; ?>
+                                <span><?php echo htmlspecialchars($item['title']); ?></span>
+                            </div>
+                        </td>
+                        <td>R<?php echo number_format($item['price'], 2); ?></td>
+                        <td>
+                            <span class="badge badge-<?php echo strtolower($item['status']); ?>">
+                                <?php echo $item['status']; ?>
+                            </span>
+                        </td>
+                        <td><?php echo date('d M Y', strtotime($item['created_at'])); ?></td>
+                        <td>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <a href="listing.php?id=<?php echo $item['listing_id']; ?>"
+                                    class="btn-small btn-view" target="_blank">
+                                    <i class="ti ti-eye"></i> View
                                 </a>
-                            <?php endif; ?>
-                            
-                            <a href="delete_listing.php?id=<?php echo $item['listing_id']; ?>" 
-                               class="btn-small btn-delete"
-                               onclick="return confirm('Delete this listing permanently?')">
-                                <i class="ti ti-trash"></i> Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
+
+                                <?php if ($item['status'] == 'Listed'): ?>
+                                    <a href="update_status.php?id=<?php echo $item['listing_id']; ?>&status=Sold"
+                                        class="btn-small"
+                                        style="background: var(--success); color: white;"
+                                        onclick="return confirm('Mark this listing as sold?')">
+                                        <i class="ti ti-check"></i> Mark Sold
+                                    </a>
+                                <?php endif; ?>
+
+                                <a href="delete_listing.php?id=<?php echo $item['listing_id']; ?>"
+                                    class="btn-small btn-delete"
+                                    onclick="return confirm('Delete this listing permanently?')">
+                                    <i class="ti ti-trash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
