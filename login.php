@@ -1,53 +1,51 @@
 <?php
-
-// Uses prepared statements to prevent SQL injection
-
+session_start(); 
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
-    //  Get and clean the inputs
     $email = clean($_POST['email']);
     $password = $_POST['password'];
     
-    //  Validate
     if ($email == '' || $password == '') {
         $error = 'Please enter both email and password.';
     } else {
-        
-        //  Find user in database (SECURE - prepared statement)
-        $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE email = ?");
+        // use LIMIT 1
+        $stmt = mysqli_prepare($conn, 
+            "SELECT user_id, full_name, email, password, role 
+             FROM users 
+             WHERE email = ? 
+             LIMIT 1"
+        );
         mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         
-        if (mysqli_num_rows($result) == 1) {
-            $user = mysqli_fetch_assoc($result);
+        if ($user = mysqli_fetch_assoc($result)) {
             
-            //  Verify password against stored hash
-            if (password_verify($password, $user['password_hash'])) {
+            if (password_verify($password, $user['password'])) {
                 
-                // Save user info in session
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['full_name'] = $user['full_name'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
                 
-                //  Redirect based on role
-                if ($user['role'] == 'admin') {
-                    header("Location: /admin_dashboard.php");
-                } elseif ($user['role'] == 'seller') {
-                    header("Location: /seller_dashboard.php");
-                } else {
-                    header("Location: /index.php");
+                
+                switch ($user['role']) {
+                    case 'admin':
+                        header("Location: admin_dashboard.php");
+                        break;
+                    case 'seller':
+                        header("Location: seller_dashboard.php");
+                        break;
+                    default:
+                        header("Location: index.php");
                 }
                 exit();
-                
             } else {
-                $error = 'Password is incorrect.';
+                $error = 'Invalid password.';
             }
         } else {
             $error = 'No account found with that email.';
@@ -82,7 +80,7 @@ include 'includes/header.php';
         </form>
         
         <p class="form-link">
-            Don't have an account? <a href="/register.php">Register here</a>
+            Don't have an account? <a href="register.php">Register here</a>
         </p>
     </div>
 </section>

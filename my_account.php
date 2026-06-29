@@ -10,22 +10,22 @@ $user_id = $_SESSION['user_id'];
 // Handle order cancellation
 if (isset($_GET['cancel'])) {
     $transaction_id = intval($_GET['cancel']);
-    
+
     // Verify this transaction belongs to the current buyer and is Pending
     $check_sql = "SELECT * FROM transactions WHERE transaction_id = $transaction_id AND buyer_id = $user_id AND status = 'Pending'";
     $check_result = mysqli_query($conn, $check_sql);
-    
+
     if (mysqli_num_rows($check_result) > 0) {
         $trans = mysqli_fetch_assoc($check_result);
         $listing_id = $trans['listing_id'];
-        
+
         // Update transaction status to Cancelled
         mysqli_query($conn, "UPDATE transactions SET status = 'Cancelled' WHERE transaction_id = $transaction_id");
-        
+
         // Set listing back to Listed so others can buy
         mysqli_query($conn, "UPDATE listings SET status = 'Listed' WHERE listing_id = $listing_id");
     }
-    
+
     header("Location: my_account.php");
     exit();
 }
@@ -56,7 +56,7 @@ include 'includes/header.php';
         <h1>My Account</h1>
         <p>Welcome back, <?php echo $_SESSION['full_name']; ?></p>
     </div>
-    
+
     <!-- Profile Card -->
     <div style="background: var(--white); padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 32px;">
         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
@@ -72,49 +72,67 @@ include 'includes/header.php';
             </div>
         </div>
     </div>
-    
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
         <!-- My Orders -->
         <div>
             <h2 class="section-title">My Orders</h2>
             <?php if (mysqli_num_rows($buyer_result) > 0): ?>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
-                <?php while ($order = mysqli_fetch_assoc($buyer_result)): ?>
-                <div style="background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow);">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                        <a href="listing.php?id=<?php echo $order['listing_id']; ?>" style="font-size: 15px; font-weight: 600; color: var(--text);">
-                            <?php echo $order['title']; ?>
-                        </a>
-                        <span class="badge badge-<?php echo strtolower($order['status']); ?>"><?php echo $order['status']; ?></span>
-                    </div>
-                    <p style="font-size: 14px; color: var(--text-light); margin-bottom: 8px;">
-                        Seller: <?php echo $order['seller_name']; ?> | R<?php echo number_format($order['price'], 2); ?>
-                    </p>
-                    <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">
-                        <i class="ti ti-credit-card"></i> <?php echo $order['payment_method']; ?> | 
-                        <i class="ti ti-truck"></i> <?php echo $order['delivery_method']; ?>
-                    </p>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <a href="messages.php?to=<?php echo $order['seller_id']; ?>&listing=<?php echo $order['listing_id']; ?>" class="btn-small btn-view">
-                            <i class="ti ti-message-circle"></i> Message Seller
-                        </a>
-                        <?php if ($order['status'] == 'Pending'): ?>
-                            <a href="payment.php?transaction=<?php echo $order['transaction_id']; ?>" class="btn-small btn-verify">
-                                <i class="ti ti-credit-card"></i> Pay
-                            </a>
-                            <a href="my_account.php?cancel=<?php echo $order['transaction_id']; ?>" 
-                               class="btn-small btn-delete"
-                               onclick="return confirmDelete('Cancel this order? The item will be returned to listings.')">
-                                <i class="ti ti-x"></i> Cancel
-                            </a>
-                        <?php elseif ($order['status'] == 'Sold'): ?>
-                            <a href="my_account.php?rate=<?php echo $order['transaction_id']; ?>" class="btn-small btn-verify">
-                                <i class="ti ti-star"></i> Rate Seller
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <?php endwhile; ?>
+                    <?php while ($order = mysqli_fetch_assoc($buyer_result)): ?>
+                        <div style="background: var(--white); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <a href="listing.php?id=<?php echo $order['listing_id']; ?>" style="font-size: 15px; font-weight: 600; color: var(--text);">
+                                    <?php echo $order['title']; ?>
+                                </a>
+                                <span class="badge badge-<?php echo strtolower($order['status']); ?>"><?php echo $order['status']; ?></span>
+                            </div>
+                            <p style="font-size: 14px; color: var(--text-light); margin-bottom: 8px;">
+                                Seller: <?php echo $order['seller_name']; ?> | R<?php echo number_format($order['price'], 2); ?>
+                            </p>
+                            <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">
+                                <i class="ti ti-credit-card"></i> <?php echo $order['payment_method']; ?> |
+                                <i class="ti ti-truck"></i> <?php echo $order['delivery_method']; ?>
+                            </p>
+                            <?php
+
+                            if ($order['status'] == 'Completed' || $order['status'] == 'Sold'):
+
+                                $rated_check = mysqli_query($conn, "SELECT rating_id FROM ratings WHERE listing_id = {$order['listing_id']} AND buyer_id = {$_SESSION['user_id']}");
+                                $is_rated = mysqli_num_rows($rated_check) > 0;
+                            ?>
+                                <?php if (!$is_rated): ?>
+                                    <a href="rate_seller.php?listing_id=<?php echo $order['listing_id']; ?>" class="btn-small btn-view">
+                                        <i class="ti ti-star"></i> Rate Seller
+                                    </a>
+                                <?php else: ?>
+                                    <span style="font-size: 12px; color: var(--success);"><i class="ti ti-check"></i> Rated</span>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <a href="messages.php?to=<?php echo $order['seller_id']; ?>&listing=<?php echo $order['listing_id']; ?>" class="btn-small btn-view">
+                                    <i class="ti ti-message-circle"></i> Message Seller
+                                </a>
+                                <a href="rate_seller.php?listing_id=<?php echo $order['listing_id']; ?>" class="btn-small btn-view" style="margin-left: 8px;">
+                                    <i class="ti ti-star"></i> Rate Seller
+                                </a>
+                                <?php if ($order['status'] == 'Pending'): ?>
+                                    <a href="payment.php?transaction=<?php echo $order['transaction_id']; ?>" class="btn-small btn-verify">
+                                        <i class="ti ti-credit-card"></i> Pay
+                                    </a>
+                                    <a href="my_account.php?cancel=<?php echo $order['transaction_id']; ?>"
+                                        class="btn-small btn-delete"
+                                        onclick="return confirmDelete('Cancel this order? The item will be returned to listings.')">
+                                        <i class="ti ti-x"></i> Cancel
+                                    </a>
+                                <?php elseif ($order['status'] == 'Sold'): ?>
+                                    <a href="my_account.php?rate=<?php echo $order['transaction_id']; ?>" class="btn-small btn-verify">
+                                        <i class="ti ti-star"></i> Rate Seller
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
                 </div>
             <?php else: ?>
                 <div style="background: var(--white); padding: 40px; border-radius: var(--radius); text-align: center; color: var(--text-light);">
@@ -123,27 +141,27 @@ include 'includes/header.php';
                 </div>
             <?php endif; ?>
         </div>
-        
+
         <!-- My Favourites -->
         <div>
             <h2 class="section-title">Saved Items</h2>
             <?php if (mysqli_num_rows($fav_result) > 0): ?>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
-                <?php while ($fav = mysqli_fetch_assoc($fav_result)): ?>
-                <div style="background: var(--white); padding: 16px; border-radius: var(--radius); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <a href="/listing.php?id=<?php echo $fav['listing_id']; ?>" style="font-weight: 600; color: var(--text);">
-                            <?php echo $fav['title']; ?>
-                        </a>
-                        <p style="font-size: 13px; color: var(--text-light);">
-                            R<?php echo number_format($fav['price'], 2); ?> | <?php echo $fav['seller_name']; ?> | <?php echo $fav['status']; ?>
-                        </p>
-                    </div>
-                    <a href="/favourites.php?remove=<?php echo $fav['listing_id']; ?>" style="color: var(--danger); font-size: 20px;">
-                        <i class="ti ti-trash"></i>
-                    </a>
-                </div>
-                <?php endwhile; ?>
+                    <?php while ($fav = mysqli_fetch_assoc($fav_result)): ?>
+                        <div style="background: var(--white); padding: 16px; border-radius: var(--radius); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <a href="/listing.php?id=<?php echo $fav['listing_id']; ?>" style="font-weight: 600; color: var(--text);">
+                                    <?php echo $fav['title']; ?>
+                                </a>
+                                <p style="font-size: 13px; color: var(--text-light);">
+                                    R<?php echo number_format($fav['price'], 2); ?> | <?php echo $fav['seller_name']; ?> | <?php echo $fav['status']; ?>
+                                </p>
+                            </div>
+                            <a href="/favourites.php?remove=<?php echo $fav['listing_id']; ?>" style="color: var(--danger); font-size: 20px;">
+                                <i class="ti ti-trash"></i>
+                            </a>
+                        </div>
+                    <?php endwhile; ?>
                 </div>
             <?php else: ?>
                 <div style="background: var(--white); padding: 40px; border-radius: var(--radius); text-align: center; color: var(--text-light);">

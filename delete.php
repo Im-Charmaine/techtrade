@@ -2,31 +2,59 @@
 session_start();
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
-require_seller();
+require_login();
 
-$listing_id = intval($_GET['id']);
-$seller_id = $_SESSION['user_id'];
-
-// Verify ownership before deleting
-$check = mysqli_prepare($conn, "SELECT image_url FROM listings WHERE listing_id = ? AND seller_id = ?");
-mysqli_stmt_bind_param($check, "ii", $listing_id, $seller_id);
-mysqli_stmt_execute($check);
-$result = mysqli_stmt_get_result($check);
-$listing = mysqli_fetch_assoc($result);
-
-if (!$listing) {
-    die('Listing not found or access denied');
+// Only sellers and admins can delete
+if ($_SESSION['role'] != 'seller' && $_SESSION['role'] != 'admin') {
+    header('Location: index.php');
+    exit;
 }
 
-// Delete image file if exists
-if (!empty($listing['image_url']) && file_exists('uploads/' . $listing['image_url'])) {
-    unlink('uploads/' . $listing['image_url']);
-}
+$listing_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$user_id = $_SESSION['user_id'];
 
-// Delete from database
-$stmt = mysqli_prepare($conn, "DELETE FROM listings WHERE listing_id = ? AND seller_id = ?");
-mysqli_stmt_bind_param($stmt, "ii", $listing_id, $seller_id);
-mysqli_stmt_execute($stmt);
+if ($listing_id > 0) {
+    // Verify ownership (admin can delete any)
+    if ($_SESSION['role'] == 'admin') {
+        $check_sql = "SELECT listing_id, image_url FROM listings WHERE listing_id = $listing_id";
+    } else {
+        $check_sql = "SELECT listing_id, image_url FROM listings WHERE listing_id = $listing_id AND seller_id = $user_id";
+    }
+    
+    $check_result = mysqli_query($conn, $check_sql);
+    $listing = mysqli_fetch_assoc($check_result);
+    
+    if ($listing) {
+        $image_url = $listing['image_url'];
+        
+        
+        mysqli_query($conn, "DELETE FROM cart WHERE listing_id = $listing_id");
+        mysqli_query($conn, "DELETE FROM messages WHERE listing_id = $listing_id");
+        mysqli_query($conn, "DELETE FROM transactions WHERE listing_id = $listing_id");
+        
+        // Delete the listing
+        $delete_sql = "DELETE FROM listings WHERE listing_id = $listing_id";
+        if ($_SESSION['role'] != 'admin') {
+            $delete_sql .= " AND seller_id = $user_id";
+        }
+        
+        if (mysqli_query($conn, $delete_sql)) {
+            // Delete image file
+            if (!empty($image_url) && file_exists('uploads/' . $image_url)) {
+                unlink('uploads/' . $image_url);
+            }
+            
+            // Set success message
+            $_SESSION['success_message'] = 'Listing deleted successfully.';
+        } else {
+            $_SESSION['error_message'] = 'Error deleting listing.';
+        }
+    } else {
+        $_SESSION['error_message'] = 'Listing not found or permission denied.';
+    }
+} else {
+    $_SESSION['error_message'] = 'Invalid listing ID.';
+}
 
 header('Location: seller_dashboard.php');
 exit;

@@ -1,6 +1,6 @@
 <?php
 // Seller Dashboard — Manage listings and view activity
-
+session_start();
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 require_seller();
@@ -25,6 +25,19 @@ $sold_listings = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as tota
 
 include 'includes/header.php';
 ?>
+<?php if (isset($_SESSION['success_message'])): ?>
+    <div style="margin-bottom: 20px; padding: 12px 16px; background: rgba(0,200,100,0.1); border: 1px solid var(--success); border-radius: 8px; color: var(--success);">
+        <i class="ti ti-check-circle"></i> <?php echo $_SESSION['success_message'];
+                                            unset($_SESSION['success_message']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error_message'])): ?>
+    <div style="margin-bottom: 20px; padding: 12px 16px; background: rgba(255,50,50,0.1); border: 1px solid var(--danger); border-radius: 8px; color: var(--danger);">
+        <i class="ti ti-alert-circle"></i> <?php echo $_SESSION['error_message'];
+                                            unset($_SESSION['error_message']); ?>
+    </div>
+<?php endif; ?>
 
 <div class="container" style="padding: 32px 20px;">
     <div class="dashboard-header">
@@ -139,9 +152,8 @@ include 'includes/header.php';
                                     </a>
                                 <?php endif; ?>
 
-                                <a href="delete_listing.php?id=<?php echo $item['listing_id']; ?>"
-                                    class="btn-small btn-delete"
-                                    onclick="return confirm('Delete this listing permanently?')">
+                                <a href="delete.php?id=<?php echo $item['listing_id']; ?>"
+                                    onclick="return confirm('Are you sure you want to delete this listing? This cannot be undone.')">
                                     <i class="ti ti-trash"></i> Delete
                                 </a>
                             </div>
