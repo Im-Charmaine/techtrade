@@ -84,6 +84,57 @@ include 'includes/header.php';
             <i class="ti ti-inbox"></i> View Messages
         </a>
     </div>
+        <!-- Orders Card -->
+    <div class="dashboard-card" style="background: var(--bg-card); border: 1px solid rgba(100,100,200,0.2); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <div>
+                <h3 style="margin-bottom: 8px;"><i class="ti ti-shopping-bag" style="color: var(--primary);"></i> New Orders</h3>
+                <p style="color: var(--text-light); font-size: 14px;">Buyers waiting for meetup</p>
+            </div>
+        </div>
+        
+        <?php
+        $orders_sql = "SELECT t.*, l.title, l.image_url, u.full_name as buyer_name, u.phone as buyer_phone 
+                       FROM transactions t
+                       JOIN listings l ON t.listing_id = l.listing_id
+                       JOIN users u ON t.buyer_id = u.user_id
+                       WHERE t.seller_id = $seller_id AND t.status = 'Pending'
+                       ORDER BY t.created_at DESC";
+        $orders_result = mysqli_query($conn, $orders_sql);
+        
+        if (mysqli_num_rows($orders_result) == 0): ?>
+            <p style="color: var(--text-light); text-align: center; padding: 20px;">No pending orders</p>
+        <?php else: ?>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <?php while ($order = mysqli_fetch_assoc($orders_result)): ?>
+                <div style="background: var(--surface); border-radius: 8px; padding: 16px; display: flex; gap: 12px; align-items: center;">
+                    <div style="width: 50px; height: 50px; background: var(--bg-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <?php if ($order['image_url']): ?>
+                            <img src="uploads/<?php echo htmlspecialchars($order['image_url']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                        <?php else: ?>
+                            <i class="ti ti-device-mobile" style="color: var(--primary);"></i>
+                        <?php endif; ?>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <h4 style="font-size: 14px; margin-bottom: 4px;"><?php echo htmlspecialchars($order['title']); ?></h4>
+                        <p style="font-size: 12px; color: var(--text-light); margin-bottom: 4px;">
+                            Buyer: <?php echo htmlspecialchars($order['buyer_name']); ?>
+                        </p>
+                        <p style="font-size: 12px; color: var(--primary); font-weight: 600;">
+                            Code: <?php echo $order['meetup_code']; ?>
+                        </p>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                        <a href="messages.php?to=<?php echo $order['buyer_id']; ?>&listing=<?php echo $order['listing_id']; ?>" 
+                           class="btn-small btn-view">
+                            <i class="ti ti-message-circle"></i> Message
+                        </a>
+                    </div>
+                </div>
+                <?php endwhile; ?>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <!-- Actions -->
     <div style="margin-bottom: 24px;">
